@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todo-app</title>
+</head>
+<body>
+    <div class="popup" id="popup">
+        New Todo:
+        <form class="todo-form">
+            <input id="todo-form-title" type="text" placeholder="Enter Title" required>
+            <input id="todo-form-notes" type="text" placeholder="Enter Details">
+            <div class="priority-container">Priority: 
+                <input type="radio" id="high" name="todo-priority" value="high" required>
+                <input type="radio" id="medium" name="todo-priority" value="medium">
+                <input type="radio" id="low" name="todo-priority" value="low">  
+            </div>
+            <input type="date" id="todo-date" required>
+            <button class="enter-todo">enter</button>
+
+        </form>
+    </div>
+    <div id="container">
+        <div id="header">Todo App</div>
+        <div id="sidebar">
+            <button>All</button>
+            <button>Today</button>
+            <button>Week</button>
+            <button id="ntodo">+</button>
+            <div>Projects</div>
+            <button>Add Project</button>
+            
+        </div>
+        <div id="content"></div>
+    </div>
+    <script src="bundle.js"></script>
+</body>
+</html>
