@@ -27,6 +27,17 @@ body{
 #content{
     grid-column-start:2;
     grid-row-start:2;
+    padding: 2vh 2vw 2vh 2vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+.todo{
+    background-color: black;
+    color: white;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
 }
 .todo-form{
     display: flex;
