@@ -54,5 +54,15 @@ body{
     z-index:9;
     background-color: grey;
     color:white;
-
+}
+.project-popup{
+    width:40vw;
+    height: 25vh;
+    display:none;
+    position:fixed;
+    bottom:50%;
+    right:20%;
+    z-index:9;
+    background-color: grey;
+    color:white;
 }

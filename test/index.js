@@ -1,5 +1,5 @@
 //import {isThisWeek} from 'date-fns';
-
+let projectList=[];
 let todoList=[];
 class Todo {
     constructor(title, notes, priority, date,index){
@@ -15,7 +15,23 @@ class Todo {
         <div>${date}</div>
         <button id="delete-todo">X</button>`
     }
+}
+class Project{
+    constructor(title){
+        this.title=title;
+        this.todos=[];
+    }
+    setTodoList = function(listOfTodoTitles){
 
+        listOfTodoTitles.forEach((todoTitle)=>{
+            for(let i=0; i<todoList.length;i++){
+                if(todoTitle.value===todoList[i].title){
+                    this.todos.push(todoList[i]);
+                }
+            }
+            
+        })
+    }
 }
 function removeFromList(index){
     for(let i = index+1; i<todoList.length - 1; i++){
@@ -25,7 +41,7 @@ function removeFromList(index){
 }
 const domManipulation = (()=>{
     const renderTodo = (todo) => {
-        console.log(todo);
+
         let newTodoDisplay = document.createElement('div');
         newTodoDisplay.classList.add('todo');
         newTodoDisplay.classList.add(`${todo.index}`);
@@ -39,7 +55,7 @@ const domManipulation = (()=>{
         document.querySelector('#content').appendChild(newTodoDisplay);
         const delBtns=document.querySelectorAll('#delete-todo');
         delBtns.forEach((delBtn)=>{
-            console.log
+  
             delBtn.addEventListener('click',(e)=>{
                 e.target.parentNode.remove();
                 removeFromList(parseInt(e.target.parentNode.classList[1]))
@@ -53,6 +69,29 @@ const domManipulation = (()=>{
     const closeForm=()=>{
         document.querySelector('.todo-form').reset();
         document.getElementById("popup").style.display = 'none';
+    }
+    const openProjectForm=()=>{
+        document.querySelector('#checkboxes').innerHTML='';
+        todoList.forEach((todo)=>{
+            let checkboxInput = document.createElement('input');
+            checkboxInput.type="checkbox";
+            checkboxInput.Id=`${todo.title}`;
+            checkboxInput.value=`${todo.title}`;
+            let checkboxLabel = document.createElement('label');
+            checkboxLabel.for = `${todo.title}`;
+            checkboxLabel.textContent=`${todo.title}`;
+            document.querySelector('#checkboxes').appendChild(checkboxInput);               
+            document.querySelector('#checkboxes').appendChild(checkboxLabel);
+        })
+        document.querySelector('.project-popup').style.display='block';
+    }
+    const closeProjectForm=()=>{
+        addNewProject();
+        var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+        document.querySelector('.project-form').reset();
+        document.getElementById("project-popup").style.display = 'none';
+        projectList[projectList.length-1].setTodoList(checkboxes);
+
     }
     const renderFullTodoList = () =>{
         document.querySelector('#content').innerHTML='';
@@ -114,11 +153,57 @@ const domManipulation = (()=>{
     
         }
     
-    const addNewProject = () =>{
-        document.querySelector('#sidebar');
+    const renderNewProject = () =>{
+        let sideBarForNewProject=document.querySelector('#sidebar');
+        let newButtonProject= document.createElement('button');
+        newButtonProject.classList.add('projectBtn');
+        newButtonProject.textContent=`${projectList[projectList.length-1].title}`;
+        sideBarForNewProject.appendChild(newButtonProject);
+    }
+    const renderProjectTodoList=(projectName)=>{
+        document.querySelector('#content').innerHTML='';
+        let deleteProjectBtn=document.createElement('button');
+        deleteProjectBtn.textContent='Delete Project';
+        document.querySelector('#content').appendChild(deleteProjectBtn);
+
+        projectList.forEach((project)=>{
+            if(project.title === projectName){
+    
+                project.todos.forEach((todo)=>{
+                    let newTodoDisplay = document.createElement('div');
+                    newTodoDisplay.classList.add('todo');
+                    newTodoDisplay.classList.add(`${todo.index}`);
+                    newTodoDisplay.innerHTML=`
+                        <div id="todo-title">${todo.title}</div>
+                        <div>${todo.notes}</div>
+                        <div>${todo.priority}</div>
+                        <div>${todo.date}</div>
+                        <button id="delete-todo">X</button>`
+                    document.querySelector('#content').appendChild(newTodoDisplay);
+            })
+        }
+    })
+        const delBtns=document.querySelectorAll('#delete-todo');
+        delBtns.forEach((delBtn)=>{
+            delBtn.addEventListener('click',(e)=>{
+                e.target.parentNode.remove();
+                removeFromList(parseInt(e.target.parentNode.classList[1]))
+                })
+            })
+
+        //deleteProjectBtn.addEventListener('click',deleteProject(projectName))
+    }
+    const deleteProject=(nameOfProjectToDelete)=>{
+        const allProjectBtns = document.querySelectorAll('.projectBtn');
+        allProjectBtns.forEach((projectBtn)=>{
+            if(projectBtn.textContent===nameOfProjectToDelete){
+                renderFullTodoList();
+                projectBtn.remove();
+            }
+        })
     }
 
-    return {addNewProject,renderTodo, openForm, closeForm, renderFullTodoList,renderTodayTodoList,renderWeekTodoList};
+    return {renderProjectTodoList,closeProjectForm,openProjectForm,renderNewProject,renderTodo, openForm, closeForm, renderFullTodoList,renderTodayTodoList,renderWeekTodoList};
 })();
 
 
@@ -130,7 +215,10 @@ function addNewTodo(){
         document.getElementById('todo-date').value,
         todoList.length));
     
-    console.log(todoList);
+
+}
+function addNewProject(){
+    projectList.push(new Project(document.getElementById('project-form-title').value))
 }
 
 const newTodoBtn = document.getElementById('ntodo');
@@ -139,6 +227,7 @@ const displayAllTodosBtn = document.getElementById('all-todos');
 const displayTodayTodosBtn = document.getElementById('today-todos');
 const displayWeekTodosBtn = document.getElementById('week-todos');
 const newProjectBtn = document.getElementById('new-project');
+const submitProjectBtn = document.getElementById('enter-project-btn');
 newTodoBtn.addEventListener('click', ()=>{
     domManipulation.openForm();
 });
@@ -153,7 +242,19 @@ displayAllTodosBtn.addEventListener('click', domManipulation.renderFullTodoList)
 displayTodayTodosBtn.addEventListener('click', domManipulation.renderTodayTodoList);
 displayWeekTodosBtn.addEventListener('click', domManipulation.renderWeekTodoList);
 newProjectBtn.addEventListener('click',()=>{
-    projectForm=document.querySelector('.project-form');
-    
+    domManipulation.openProjectForm();
 });
+submitProjectBtn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    domManipulation.closeProjectForm();
+    domManipulation.renderNewProject();
+    const projectBtns = document.querySelectorAll('.projectBtn');
+
+    projectBtns.forEach((projectBtn)=>{
+  
+        projectBtn.addEventListener('click',(e)=>{
+        domManipulation.renderProjectTodoList(e.target.textContent)})
+    })
+})
+
 
